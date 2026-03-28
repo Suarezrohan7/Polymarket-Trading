@@ -5,8 +5,11 @@ Uses Claude to confirm opportunity and produce final recommendation.
 """
 
 import json
+import os
 import yaml
 import anthropic
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def load_config():
@@ -94,7 +97,8 @@ def ask_claude(price_snapshot, market_odds, opportunity, portfolio_summary, conf
       suggested_amount  float (USDC)
       reasoning       str
     """
-    client = anthropic.Anthropic(api_key=config["anthropic_api_key"])
+    api_key = os.getenv("ANTHROPIC_API_KEY") or config.get("anthropic_api_key")
+    client = anthropic.Anthropic(api_key=api_key)
 
     balance  = portfolio_summary.get("balance_usdc", 0)
     max_bet  = min(config["max_bet_usdc"], balance)
